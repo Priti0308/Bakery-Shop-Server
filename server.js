@@ -34,11 +34,12 @@ app.use('/api/sales', require('./routes/salesRoutes'));
 app.use('/api/ledger', require('./routes/ledgerRoutes'));
 app.use('/api/reports', require('./routes/reportRoutes'));
 
+
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

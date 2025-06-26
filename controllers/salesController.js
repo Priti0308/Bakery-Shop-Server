@@ -11,9 +11,6 @@ exports.recordSale = async (req, res) => {
     if (!customer) {
       return res.status(400).json({ message: 'Customer is required.' });
     }
-
-   
-
     let totalAmount = 0;
 
     for (const item of items) {
