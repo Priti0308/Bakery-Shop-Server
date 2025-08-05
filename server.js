@@ -33,6 +33,8 @@ app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/sales', require('./routes/salesRoutes'));
 app.use('/api/ledger', require('./routes/ledgerRoutes'));
 app.use('/api/reports', require('./routes/reportRoutes'));
+app.use("/api/admin", require("./routes/adminRoutes"));
+app.use("/api/vendors", require("./routes/vendorRoutes"));
 
 
 app.use((req, res) => {
