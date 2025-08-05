@@ -38,6 +38,7 @@ router.post("/", async (req, res) => {
       mobile,
       address,
       password: hashedPassword,
+      status: "pending", 
     });
 
     await vendor.save();
