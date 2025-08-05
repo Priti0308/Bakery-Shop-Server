@@ -18,8 +18,8 @@ router.get("/", async (req, res) => {
 // ✅ Add New Vendor
 router.post("/", async (req, res) => {
   try {
-    const { businessName, mobile, address, password } = req.body;
-    if (!businessName || !mobile || !address || !password) {
+    const { name, businessName, mobile, address, password } = req.body;
+    if (!name|| !businessName || !mobile || !address || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -33,6 +33,7 @@ router.post("/", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const vendor = new Vendor({
+      name,
       businessName,
       mobile,
       address,
@@ -63,10 +64,11 @@ router.delete("/:id", async (req, res) => {
 // ✅ Approve / Reject Vendor
 router.put("/:id", async (req, res) => {
   try {
-    const { businessName, mobile, address, status } = req.body;
+    const { name, businessName, mobile, address, status } = req.body;
     const vendor = await Vendor.findById(req.params.id);
     if (!vendor) return res.status(404).json({ message: "Vendor not found" });
 
+    if (name) vendor.name = name;
     if (businessName) vendor.businessName = businessName;
     if (mobile) vendor.mobile = mobile;
     if (address) vendor.address = address;

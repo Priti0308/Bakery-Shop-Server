@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const vendorSchema = new mongoose.Schema(
   {
+    name: { type: String, required: true },
     businessName: { type: String, required: true },
     mobile: { type: String, required: true, unique: true },
     address: { type: String, required: true },
