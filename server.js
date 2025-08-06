@@ -8,6 +8,7 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
+
 const MONGO_URI = process.env.MONGO_URI;
 if (!MONGO_URI) {
   console.error(' file');

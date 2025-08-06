@@ -18,49 +18,49 @@ router.get("/", async (req, res) => {
 // ✅ Add New Vendor
 router.post("/", async (req, res) => {
   try {
+    console.log("Incoming Data:", req.body);
+
     const { name, businessName, mobile, address, password } = req.body;
-    if (!name|| !businessName || !mobile || !address || !password) {
+
+    if (!name || !businessName || !mobile || !address || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Check if vendor exists
+    // Check if vendor already exists
     const existingVendor = await Vendor.findOne({ mobile });
     if (existingVendor) {
       return res.status(400).json({ message: "Vendor already exists" });
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    let hashedPassword;
+    try {
+      hashedPassword = await bcrypt.hash(password, 10);
+    } catch (err) {
+      console.error("Password hashing error:", err);
+      return res.status(500).json({ message: "Password hashing failed" });
+    }
 
+    // Save vendor
     const vendor = new Vendor({
       name,
       businessName,
       mobile,
       address,
       password: hashedPassword,
-      status: "pending", 
+      status: "pending"
     });
 
     await vendor.save();
-    res.status(201).json(vendor);
+    console.log("Vendor added successfully:", vendor);
+
+    return res.status(201).json(vendor);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to add vendor" });
+    console.error("Error adding vendor:", error);
+    return res.status(500).json({ message: "Failed to add vendor", error: error.message });
   }
 });
 
-// ✅ Delete Vendor
-router.delete("/:id", async (req, res) => {
-  try {
-    const vendor = await Vendor.findByIdAndDelete(req.params.id);
-    if (!vendor) {
-      return res.status(404).json({ message: "Vendor not found" });
-    }
-    res.json({ message: "Vendor deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to delete vendor" });
-  }
-});
 
 // ✅ Approve / Reject Vendor
 router.put("/:id", async (req, res) => {
