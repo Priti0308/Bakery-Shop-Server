@@ -20,9 +20,9 @@ router.post("/", async (req, res) => {
   try {
     console.log("Incoming Data:", req.body);
 
-    const { name, businessName, mobile, address, password } = req.body;
+    const { name, businessName, mobile, email, address, password } = req.body;
 
-    if (!name || !businessName || !mobile || !address || !password) {
+    if (!name || !businessName || !mobile || !email || !address || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -46,9 +46,10 @@ router.post("/", async (req, res) => {
       name,
       businessName,
       mobile,
+      email,
       address,
       password: hashedPassword,
-      status: "pending"
+      // status: "pending"
     });
 
     await vendor.save();
@@ -65,13 +66,14 @@ router.post("/", async (req, res) => {
 // ✅ Approve / Reject Vendor
 router.put("/:id", async (req, res) => {
   try {
-    const { name, businessName, mobile, address, status } = req.body;
+    const { name, businessName, mobile, email,  address, status } = req.body;
     const vendor = await Vendor.findById(req.params.id);
     if (!vendor) return res.status(404).json({ message: "Vendor not found" });
 
     if (name) vendor.name = name;
     if (businessName) vendor.businessName = businessName;
     if (mobile) vendor.mobile = mobile;
+    if (email) vendor.email = email;
     if (address) vendor.address = address;
     if (status) vendor.status = status;
 
