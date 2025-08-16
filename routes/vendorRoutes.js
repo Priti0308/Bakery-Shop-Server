@@ -5,7 +5,7 @@ const router = express.Router();
 const { loginVendor } = require("../controllers/vendorController");
 router.post("/login", loginVendor);
 
-// ✅ Get All Vendors
+
 router.get("/", async (req, res) => {
   try {
     const vendors = await Vendor.find();
@@ -15,23 +15,25 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ Add New Vendor
+// Add New Vendor
 router.post("/", async (req, res) => {
   try {
     console.log("Incoming Data:", req.body);
-
     const { name, businessName, mobile, email, address, password } = req.body;
-
+    // Check for missing fields
     if (!name || !businessName || !mobile || !email || !address || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({ message: "All fields (name, businessName, mobile, email, address, password) are required." });
     }
-
-    // Check if vendor already exists
-    const existingVendor = await Vendor.findOne({ mobile });
-    if (existingVendor) {
-      return res.status(400).json({ message: "Vendor already exists" });
+    // Check for duplicate mobile
+    const existingMobile = await Vendor.findOne({ mobile });
+    if (existingMobile) {
+      return res.status(400).json({ message: "A vendor with this mobile already exists." });
     }
-
+    // Check for duplicate email
+    const existingEmail = await Vendor.findOne({ email });
+    if (existingEmail) {
+      return res.status(400).json({ message: "A vendor with this email already exists." });
+    }
     // Hash password
     let hashedPassword;
     try {
@@ -40,7 +42,6 @@ router.post("/", async (req, res) => {
       console.error("Password hashing error:", err);
       return res.status(500).json({ message: "Password hashing failed" });
     }
-
     // Save vendor
     const vendor = new Vendor({
       name,
@@ -49,21 +50,43 @@ router.post("/", async (req, res) => {
       email,
       address,
       password: hashedPassword,
-      // status: "pending"
     });
-
     await vendor.save();
     console.log("Vendor added successfully:", vendor);
-
-    return res.status(201).json(vendor);
+    return res.status(201).json({
+      message: "Vendor added successfully!",
+      vendor,
+    });
   } catch (error) {
     console.error("Error adding vendor:", error);
+    
+    if (error.code === 11000) {
+      if (error.keyPattern?.email) {
+        return res.status(400).json({ message: "Email already exists." });
+      }
+      if (error.keyPattern?.mobile) {
+        return res.status(400).json({ message: "Mobile already exists." });
+      }
+      return res.status(400).json({ message: "Duplicate key error." });
+    }
     return res.status(500).json({ message: "Failed to add vendor", error: error.message });
   }
 });
 
+//  Delete Vendor
+router.delete("/:id", async (req, res) => {
+  try {
+    const vendor = await Vendor.findByIdAndDelete(req.params.id);
+    if (!vendor) {
+      return res.status(404).json({ message: "Vendor not found" });
+    }
+    res.json({ message: "Vendor deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
-// ✅ Approve / Reject Vendor
+// Approve / Reject Vendor
 router.put("/:id", async (req, res) => {
   try {
     const { name, businessName, mobile, email,  address, status } = req.body;
@@ -84,7 +107,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// ✅ Change Password
+// Change Password
 router.put("/:id/password", async (req, res) => {
   try {
     const { password } = req.body;
