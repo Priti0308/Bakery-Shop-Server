@@ -38,9 +38,6 @@ const loginVendor = async (req, res) => {
   }
 };
 
-// @desc Get logged in vendor profile
-// @route GET /api/vendors/me
-// @access Private
 const getVendorProfile = async (req, res) => {
   try {
     if (!req.vendor) {

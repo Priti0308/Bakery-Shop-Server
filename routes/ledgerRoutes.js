@@ -7,7 +7,7 @@ router.get('/', async (req, res) => {
   try {
     const ledgers = await Ledger.find({ total: { $gt: 0 }, paid: false })
       .populate('customer')
-       .populate('products')  // ✅ Populate products
+       .populate('products')  
       .sort({ createdAt: -1 });
 
     if (!ledgers.length) {

@@ -1,5 +1,5 @@
 const Product = require('../models/Product');
-
+const mongoose = require('mongoose');
 exports.getProducts = async (req, res) => {
   try {
     const products = await Product.find();

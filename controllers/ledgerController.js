@@ -1,4 +1,4 @@
-
+const mongoose = require('mongoose');
 const Sale = require('../models/Sale');
 
 exports.getLedger = async (req, res) => {

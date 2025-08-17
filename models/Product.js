@@ -17,13 +17,18 @@ const productSchema = new mongoose.Schema({
   barcode: { 
     type: String
   },
-  weight: { type: String }, // ✅ added this line
+  weight: { type: String },
   expiryDate: { 
     type: Date 
   },
   manufacturingDate: { 
     type: Date
-   }
+   },
+  vendor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Vendor',
+    required: true
+  }
 }, { timestamps: true });
 
 // Auto-generate barcode based on _id after save
