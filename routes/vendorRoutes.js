@@ -2,9 +2,12 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const Vendor = require("../models/Vendor");
 const router = express.Router();
-const { loginVendor } = require("../controllers/vendorController");
-router.post("/login", loginVendor);
+const { loginVendor,getVendorProfile } = require("../controllers/vendorController");
 
+const { protectVendor } = require("../middleware/authMiddleware");
+
+router.post("/login", loginVendor);
+router.get("/me", protectVendor, getVendorProfile);
 
 router.get("/", async (req, res) => {
   try {
@@ -124,5 +127,7 @@ router.put("/:id/password", async (req, res) => {
     res.status(500).json({ message: "Failed to update password" });
   }
 });
+
+
 
 module.exports = router;
