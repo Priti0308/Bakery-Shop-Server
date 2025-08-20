@@ -1,3 +1,6 @@
+const Customer = require('../models/Customer');
+const mongoose = require('mongoose');
+
 // Update a customer for the logged-in vendor
 exports.updateCustomer = async (req, res) => {
   try {
@@ -33,8 +36,6 @@ exports.deleteCustomer = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
-const Customer = require('../models/Customer');
-const mongoose = require('mongoose');
 
 
 // Get all customers for the logged-in vendor
