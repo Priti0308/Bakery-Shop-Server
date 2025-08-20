@@ -110,6 +110,32 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// Update own profile
+router.put("/me", protectVendor, async (req, res) => {
+  try {
+    const vendor = await Vendor.findById(req.vendor._id);
+    if (!vendor) return res.status(404).json({ message: "Vendor not found" });
+
+    const { name, businessName, mobile, email, address } = req.body;
+
+    if (name) vendor.name = name;
+    if (businessName) vendor.businessName = businessName;
+    if (mobile) vendor.mobile = mobile;
+    if (email) vendor.email = email;
+    if (address) vendor.address = address;
+
+    await vendor.save();
+
+    res.json({
+      message: "Profile updated successfully",
+      vendor,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to update profile" });
+  }
+});
+
 // Change Password
 router.put("/:id/password", async (req, res) => {
   try {
